@@ -65,7 +65,7 @@
     <article id="post-hashtable" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-meta">
     <a href="/2019/02/11/hashtable/" class="article-date">
-  <time datetime="2019-02-11T08:09:24.000Z" itemprop="datePublished">2019-02-11</time>
+  <time datetime="2019-02-11T08:47:21.000Z" itemprop="datePublished">2019-02-11</time>
 </a>
     
   </div>
@@ -90,7 +90,7 @@
 <p>这里储物柜是按照编号顺序排列，就相当于一个数组，由于每天去游泳的人都各不相同，就不能每个柜子都贴上对应人的名字了，所以储物前就会先去前台分配一个编号，再根据编号的下标存储在数组的下标位置。</p>
 <p>这就是典型的散列思想。每个去游泳的人的名字我们叫做<strong>键</strong>(key)或者<strong>关键字</strong>。我们把前台通过名字分配储物柜号的对应过程叫作<strong>散列函数</strong>，而通过散列函数计算得到的储物柜号码叫作<strong>散列值</strong>。</p>
 <h3 id="散列函数"><a href="#散列函数" class="headerlink" title="散列函数"></a>散列函数</h3><p>散列函数，顾名思义，它就是一个函数，我们可以把它定义为hash(key)，其中key就是元素的键，hash(key)就是通过散列函数计算得到的散列值。</p>
-<p><img src="images/hash_function.png" alt=""></p>
+<p><img src="/2019/02/11/hashtable/hash_function.png" alt=""></p>
 <p>刚刚举的例子中，散列函数其实就是前台工作人员将名字和号码牌对应起来的一个对应关系，这个例子比较不恰当，并没有一个固定的公式。那么，实用场景中，要怎么设计构造散列函数呢，我总结了三点基本的要求：</p>
 <ol>
 <li>散列函数计算得到的散列值必须是一个非负整数；</li>
@@ -102,17 +102,17 @@
 <h3 id="散列冲突"><a href="#散列冲突" class="headerlink" title="散列冲突"></a>散列冲突</h3><p>再好的散列函数也无法避免散列冲突，那怎么办呢？只能通过其他方式解决，一般散列冲突的解决办法有两类：<strong>开放寻址法</strong>和<strong>链表法</strong>。</p>
 <h4 id="1-开放寻址法"><a href="#1-开放寻址法" class="headerlink" title="1.开放寻址法"></a>1.开放寻址法</h4><p>开放寻址法的核心思想是，如果出现了散列冲突，就寻找下一个空闲位置，插入新的数据。开放寻址法也有多种方式，将介绍一个简单的探测方法，线性探测(Linear Probing)。</p>
 <h6 id="线性探测"><a href="#线性探测" class="headerlink" title="线性探测"></a><em>线性探测</em></h6><p>当我们往散列表插入数据时，如果经过散列函数散列之后，存储位置已经被占用了，我们就从当前位置依次往后查找，将数据插入到找到的空闲位置，如果遍历到尾部仍没有空闲位置，我们就从表头开始找，直到找到为止。如图所示</p>
-<p><img src="images/search_key.png" alt=""></p>
+<p><img src="/2019/02/11/hashtable/search_key.png" alt=""></p>
 <p>通过线性探测要查找数据时，和插入数据类似，也是通过散列函数得到对应位置的元素，和要查询的数据作对比，如果一致，则取出该值，如果不一致，则从该位置往下到散列表的空闲位置一个个查找，如果找到，取出对应值，如果没有找到，则数据不存在。</p>
 <p>而但通过线性探测法删除一个元素时就比较麻烦，如果查找到对应的元素时直接将该元素对应的位置置空的话，那按照上面说的线性探测查找方法，遇到一个空的位置时就停止查询，那这个空位置如果是刚刚被删除的元素，这时候这个查找方法就失败了。所以，删除一个元素时并不是直接删除，而是在要删除的位置标记deleted。在查找一个元素时如果遇到deleted标记的元素，则继续往下查找，如下图所示。</p>
-<p><img src="images/delete_hash.png" alt=""></p>
+<p><img src="/2019/02/11/hashtable/delete_hash.png" alt=""></p>
 <p>通过上面的介绍，我们可以知道，线性探测法有一个弊端。就是散列表剩余空间不足时，就会频繁地出现散列冲突，导致效率不高，极端情况下插入一个元素会时间复杂度为O(n)。</p>
 <p>对于开放寻址的冲突解决方法，除了线性探测方法外，还有另外两种比较经典的探测方法，分别为<strong>二次探测</strong>和<strong>双重散列</strong>。</p>
 <h6 id="二次探测"><a href="#二次探测" class="headerlink" title="二次探测"></a><em>二次探测</em></h6><p>二次探测法，和线性探测法类似，线性探测每次的探测步长是1步，它探测的下标序列是hash(key)+0，hash(key)+1，hash(key)+2，hash(key)+3…而二次探测的步长是原来的“二次方步长”，它的探测下标序列是列是hash(key)+0，hash(key)+1，hash(key)+4，hash(key)+9…</p>
 <h6 id="双重散列"><a href="#双重散列" class="headerlink" title="双重散列"></a><em>双重散列</em></h6><p>双重散列，意思是不仅要使用一个散列函数，我们要使用一组散列函数hash1(key)，hash2(key)，hash3(key)…先使用第一个散列函数计算散列位置，如果出现冲突，再使用第二个散列函数，依次类推，直到找到空闲位置。</p>
 <p>不管使用哪种线性冲突解决方法，当空闲位置较少的时候，出现冲突的概率就会加大，为了保证散列表的操作效率，一般会保证散列表有一定比例的空闲位置，我们用<strong>装载因子</strong>来表示散列表的空闲比例，它的计算公式如下<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">散列表的装载因子 = 填入表中的元素个数 / 散列表长度</span><br></pre></td></tr></table></figure></p>
 <h4 id="2-链表法"><a href="#2-链表法" class="headerlink" title="2.链表法"></a>2.链表法</h4><p>链表法是一种更加普遍的散列表冲突解决方法，相比线性探测法，它更简单更容易理解。如图所示，散列表的元素就是一个“桶”或“槽”，每个桶都放入一个链表，将散列值相同的元素都放在同一个链表中。</p>
-<p><img src="images/linked_hash.png" alt=""></p>
+<p><img src="/2019/02/11/hashtable/linked_hash.png" alt=""></p>
 <p>当插入的时候，我们只需要通过散列函数计算出对应的散列槽位，将其插入到对应的链表中即可，时间复杂度为O(1)。当要查询或删除时，即通过同样的方法找到对应的槽位，再遍历链表查询或删除，那查询和删除的时间复杂度是多少呢？</p>
 <p>查询和删除的时间复杂度和每个槽位链表的长度成正比，假设链表平均长度为k，那时间复杂度则为O(k)。对于散列比较均匀的散列函数，理论上k = n / m，其中n为散列表中数据的个数，m为散列表的长度。</p>
 <h3 id="解答开篇"><a href="#解答开篇" class="headerlink" title="解答开篇"></a>解答开篇</h3><p>有了上面的散列表的介绍，我们再来回顾下开篇提到的Word文档编辑器的拼写错误提示是怎么实现的？</p>
@@ -121,7 +121,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/02/11/hashtable/" data-id="cjs02rbt50007zgo9my9cbynx" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2019/02/11/hashtable/" data-id="cjs03nb3500075wo9mp4f6rnp" class="article-share-link">Share</a>
       
       
     </footer>
@@ -193,7 +193,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2017/07/15/2017-7-15-source/" data-id="cjs02rbt10004zgo99h7xrhbu" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2017/07/15/2017-7-15-source/" data-id="cjs03nb3200045wo9bvkmt44i" class="article-share-link">Share</a>
       
       
     </footer>
@@ -264,7 +264,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2017/07/08/2017-7-8-source/" data-id="cjs02rbt20005zgo918x2yjyg" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2017/07/08/2017-7-8-source/" data-id="cjs03nb3400055wo9as5mscl6" class="article-share-link">Share</a>
       
       
     </footer>
@@ -336,7 +336,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2017/06/30/2017-6-30-source/" data-id="cjs02rbsz0003zgo9p349wgco" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2017/06/30/2017-6-30-source/" data-id="cjs03nb2x00015wo9pqggjdap" class="article-share-link">Share</a>
       
       
     </footer>
@@ -389,7 +389,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2017/03/14/2017-4-13-source/" data-id="cjs02rbsv0001zgo9u9qjqgwl" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2017/03/14/2017-4-13-source/" data-id="cjs03nb3100035wo9oa0tzwzy" class="article-share-link">Share</a>
       
       
     </footer>
@@ -457,7 +457,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2017/02/26/2017-2-26-source/" data-id="cjs02rbsp0000zgo94fr7berm" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2017/02/26/2017-2-26-source/" data-id="cjs03nb2s00005wo988urld72" class="article-share-link">Share</a>
       
       
     </footer>
@@ -541,7 +541,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2015/01/19/2015-1-19-source/" data-id="cjs02rbtc000gzgo9j8uuvo2p" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2015/01/19/2015-1-19-source/" data-id="cjs03nb3d000g5wo9ua8k9nj3" class="article-share-link">Share</a>
       
       
     </footer>
