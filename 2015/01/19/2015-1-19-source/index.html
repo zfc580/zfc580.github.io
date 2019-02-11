@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+
+  
+  <title>Android触摸事件传递 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="前言：本篇博文主要分析关于onTouchEvent，dispatchTouchEvent和onInterceptTouchEvent这三个方法的作用和它们之间的关系，通过流程图来解释触摸事件（MotionEvent）是怎么在三个方法中传递的；  为了了解三个方法之间的关系，我们通过一个demo来分析它们之间的关系，demo主要内容为在一个activity上设置两个布局控件，一个为LinearLa">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android触摸事件传递">
+<meta property="og:url" content="http://yoursite.com/2015/01/19/2015-1-19-source/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="前言：本篇博文主要分析关于onTouchEvent，dispatchTouchEvent和onInterceptTouchEvent这三个方法的作用和它们之间的关系，通过流程图来解释触摸事件（MotionEvent）是怎么在三个方法中传递的；  为了了解三个方法之间的关系，我们通过一个demo来分析它们之间的关系，demo主要内容为在一个activity上设置两个布局控件，一个为LinearLa">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3334280-d522f05e6aa0bbf8?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3334280-f3daba72b7de1837?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3334280-153c5110ca4e2089?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3334280-fd3e2922dcb2ac48?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3334280-7b785f8002d621eb?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3334280-28f2b8d222ccf4e3?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3334280-d9542cfd5e416cc7?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3334280-5f083f9fc20e5f11?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3334280-cefa597d719d00f8?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3334280-a5d16a12f4083db4?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2019-01-25T12:59:39.915Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android触摸事件传递">
+<meta name="twitter:description" content="前言：本篇博文主要分析关于onTouchEvent，dispatchTouchEvent和onInterceptTouchEvent这三个方法的作用和它们之间的关系，通过流程图来解释触摸事件（MotionEvent）是怎么在三个方法中传递的；  为了了解三个方法之间的关系，我们通过一个demo来分析它们之间的关系，demo主要内容为在一个activity上设置两个布局控件，一个为LinearLa">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/3334280-d522f05e6aa0bbf8?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-2015-1-19-source" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2015/01/19/2015-1-19-source/" class="article-date">
+  <time datetime="2015-01-19T09:17:00.000Z" itemprop="datePublished">2015-01-19</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/android/">android</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Android触摸事件传递
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <blockquote>
+<p>前言：本篇博文主要分析关于onTouchEvent，dispatchTouchEvent和onInterceptTouchEvent这三个方法的作用和它们之间的关系，通过流程图来解释触摸事件（MotionEvent）是怎么在三个方法中传递的；</p>
+</blockquote>
+<p>为了了解三个方法之间的关系，我们通过一个demo来分析它们之间的关系，demo主要内容为在一个activity上设置两个布局控件，一个为LinearLayout，一个是TextView，两个控件都自定义重写了它们的onTouchEvent、dispatchTouchEvent和onInterceptTouchEvent方法，并用logcat打印出各个方法相应的log标记，通过触摸控件后log的打印顺序就可知道他们的调用顺序了，通过调用顺序去分析事件的传递流程，如下图所示为activity的视图</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/3334280-d522f05e6aa0bbf8?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<p>其中红色区域为Textview的视图，底下绿色区域为LinearLayout的视图，最底下蓝色区域为activity的视图；下面贴上代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">public class GestureDemo extends Activity &#123;  </span><br><span class="line"></span><br><span class="line">    public final static String TAG = &quot;GestureDemo&quot;;  </span><br><span class="line">      </span><br><span class="line">    @Override  </span><br><span class="line">    protected void onCreate(Bundle savedInstanceState) &#123;  </span><br><span class="line">        super.onCreate(savedInstanceState);  </span><br><span class="line">        setContentView(R.layout.activity_main);   </span><br><span class="line">    &#125;  </span><br><span class="line">      </span><br><span class="line">    @Override  </span><br><span class="line">    public boolean onTouchEvent(MotionEvent event) &#123;  </span><br><span class="line">          </span><br><span class="line">        Log.i(TAG,&quot;Activity onTouchEvent. action=&quot;+getAction(event));  </span><br><span class="line">        return super.onTouchEvent(event);  </span><br><span class="line">    &#125;  </span><br><span class="line">      </span><br><span class="line">    @Override  </span><br><span class="line">    public boolean dispatchTouchEvent(MotionEvent ev) &#123;  </span><br><span class="line">          </span><br><span class="line">        Log.i(TAG,&quot;Activity dispatchTouchEvent. action=&quot;+getAction(ev));  </span><br><span class="line">        return super.dispatchTouchEvent(ev);  </span><br><span class="line">    &#125;   </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">public class MyLinearLayout extends LinearLayout &#123;  </span><br><span class="line">  </span><br><span class="line">    public MyLinearLayout(Context context) &#123;  </span><br><span class="line">        super(context);  </span><br><span class="line">    &#125;  </span><br><span class="line">      </span><br><span class="line">    public MyLinearLayout(Context context, AttributeSet attrs) &#123;  </span><br><span class="line">        this(context, attrs, 0);  </span><br><span class="line">    &#125;  </span><br><span class="line">      </span><br><span class="line">    public MyLinearLayout(Context context, AttributeSet attrs, int defStyleAttr) &#123;  </span><br><span class="line">        super(context,attrs,defStyleAttr);  </span><br><span class="line">    &#125;  </span><br><span class="line">      </span><br><span class="line">    @Override  </span><br><span class="line">    public boolean dispatchTouchEvent(MotionEvent ev) &#123;  </span><br><span class="line">  </span><br><span class="line">        Log.i(GestureDemo.TAG,&quot;MyLinearLayout dispatchTouchEvent. action=&quot;+GestureDemo.getAction(ev));  </span><br><span class="line">        return super.dispatchTouchEvent(ev);  </span><br><span class="line">    &#125;  </span><br><span class="line">      </span><br><span class="line">    @Override  </span><br><span class="line">    public boolean onInterceptTouchEvent(MotionEvent ev) &#123;  </span><br><span class="line">        Log.i(GestureDemo.TAG,&quot;MyLinearLayout onInterceptTouchEvent. action=&quot;+GestureDemo.getAction(ev));  </span><br><span class="line">        return super.onInterceptTouchEvent(ev);  </span><br><span class="line">    &#125;  </span><br><span class="line">      </span><br><span class="line">    @Override  </span><br><span class="line">    public boolean onTouchEvent(MotionEvent event) &#123;  </span><br><span class="line">        Log.i(GestureDemo.TAG,&quot;MyLinearLayout onTouchEvent. action=&quot;+GestureDemo.getAction(event));  </span><br><span class="line">        return super.onTouchEvent(event);  </span><br><span class="line">    &#125;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">public class MyTextView extends TextView &#123;  </span><br><span class="line">  </span><br><span class="line">    public MyTextView(Context context) &#123;  </span><br><span class="line">        super(context);  </span><br><span class="line">    &#125;  </span><br><span class="line">  </span><br><span class="line">    public MyTextView(Context context, AttributeSet attrs)&#123;  </span><br><span class="line">        super(context,attrs);  </span><br><span class="line">    &#125;  </span><br><span class="line">      </span><br><span class="line">    MyTextView(Context context, AttributeSet attrs, int defStyleAttr)&#123;  </span><br><span class="line">        super(context,attrs,defStyleAttr);  </span><br><span class="line">    &#125;  </span><br><span class="line">      </span><br><span class="line">    @Override  </span><br><span class="line">    public boolean dispatchTouchEvent(MotionEvent event) &#123;  </span><br><span class="line">        Log.i(GestureDemo.TAG,&quot;MyTextView dispatchTouchEvent. action=&quot;+GestureDemo.getAction(event));  </span><br><span class="line">        return super.dispatchTouchEvent(event);  </span><br><span class="line">    &#125;  </span><br><span class="line">      </span><br><span class="line">    @Override  </span><br><span class="line">    public boolean onTouchEvent(MotionEvent event) &#123;  </span><br><span class="line">        Log.i(GestureDemo.TAG,&quot;MyTextView onTouchEvent. action=&quot;+GestureDemo.getAction(event));  </span><br><span class="line">        return super.onTouchEvent(event);  </span><br><span class="line">    &#125;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>注： 每一次屏幕触摸后的手势事件都是连续地由一个down事件、若干move事件和一个up事件组成，每次都必须是down事件先发生，最后一个是up事件；</p>
+</blockquote>
+<ul>
+<li><strong>触摸事件</strong>：每一个down事件、move事件或up事件都为一个独立的触摸事件；</li>
+<li><strong>手势事件</strong>：由一系列连续的触摸事件组成的一个完整的手势，比如单击手势事件为down-up, 滑动事件为down-move…move-up；</li>
+</ul>
+<p>下面通过逐个改变各个方法的返回值，分析它们之间的传递图；</p>
+<h3 id="一、-关于onTouchEvent事件"><a href="#一、-关于onTouchEvent事件" class="headerlink" title="一、 关于onTouchEvent事件"></a>一、 关于onTouchEvent事件</h3><p>#####1. 所有方法都返回父类的方法，即MotionEvent没有被子控件消耗掉，最终只有在activity的onTouchEvent消失掉（系统默认传递流程）；</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/3334280-f3daba72b7de1837?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<p>#####2. Activity的onTouchEvent方法返回true，其事件传递流程和上一个相同</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/3334280-153c5110ca4e2089?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<p>#####3. MyLinearLayout的onTouchEvent返回true</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/3334280-fd3e2922dcb2ac48?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<p>#####4. MyTextView的onTouchEvent返回true；</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/3334280-7b785f8002d621eb?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<blockquote>
+<p>总结：以上四张图中，只改动onTouchEvent的返回值，其他方法都调用父类方法，也就是传递流程都为系统默认的流程，没有人为干预，图1即是默认的系统流程，而图2,3,4通过改变onTouchEvent的返回值为true来终止事件的继续传递；从图中可知，当屏幕触摸发生时，down事件每次都是由系统先调用最底层的activity的dispatchTouchEvent事件，然后继续往上传递到最顶层控件，然后由onTouchEvent往下传递，按照默认传递顺序，如果哪个控件返回true，事件就在那个控件停止，即被这个控件消耗掉，如：activity和MyLinearLayout的onTouchEvent都返回true，那么事件只传递到MyLinearLayout的onTouchEvent，因为事件先经过MyLinearLayout的onTouchEvent，先被它截住了；而后续的move、up事件则会根据上个down事件最终在哪个控件被消耗掉，然后按照默认系统流程传递到该控件的dispatchTouchEvent后直接传递给自己的onTouchEvent，不会再往上层控件传递；</p>
+</blockquote>
+<h3 id="二、关于dispatchTouchEvent"><a href="#二、关于dispatchTouchEvent" class="headerlink" title="二、关于dispatchTouchEvent"></a>二、关于dispatchTouchEvent</h3><p>#####1. MyLinearLayout的dispatchTouchEvent返回true</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/3334280-28f2b8d222ccf4e3?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<p>#####2. MyTextView的dispatchTouchEvent返回true</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/3334280-d9542cfd5e416cc7?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<p>#####3. MyLinearLayout的dispatchTouchEvent返回false</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/3334280-5f083f9fc20e5f11?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<p>#####4. MyTextView的dispatchTouchEvent返回false</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/3334280-cefa597d719d00f8?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<blockquote>
+<p>总结：dispatchTouchEvent从方法名大约就可以知道其功能是分发触摸事件，该方法会根据它的返回值来决定事件要往哪个方向传递：</p>
+</blockquote>
+<h6 id="（1）若返回父类方法，则交由系统来决定，即为系统默认方向继续传递给上层控件的方法；"><a href="#（1）若返回父类方法，则交由系统来决定，即为系统默认方向继续传递给上层控件的方法；" class="headerlink" title="（1）若返回父类方法，则交由系统来决定，即为系统默认方向继续传递给上层控件的方法；"></a>（1）若返回父类方法，则交由系统来决定，即为系统默认方向继续传递给上层控件的方法；</h6><h6 id="（2）若返回true，则不再继续传递，传递到这个方法为止，即这个方法消耗了事件；"><a href="#（2）若返回true，则不再继续传递，传递到这个方法为止，即这个方法消耗了事件；" class="headerlink" title="（2）若返回true，则不再继续传递，传递到这个方法为止，即这个方法消耗了事件；"></a>（2）若返回true，则不再继续传递，传递到这个方法为止，即这个方法消耗了事件；</h6><h6 id="（3）若返回false，事件传递到该方法后，事件退回到底下的父控件，继续往系统默认方向传递；如图8所示，MyTextView的dispatchTouchEvent返回false，事件退回到MyLinearLayout的onInterceptTouchEvent，继续往MyLinearLayout的onTouchEvent传递，即相当于以MyLinearLayout为最顶层控件；"><a href="#（3）若返回false，事件传递到该方法后，事件退回到底下的父控件，继续往系统默认方向传递；如图8所示，MyTextView的dispatchTouchEvent返回false，事件退回到MyLinearLayout的onInterceptTouchEvent，继续往MyLinearLayout的onTouchEvent传递，即相当于以MyLinearLayout为最顶层控件；" class="headerlink" title="（3）若返回false，事件传递到该方法后，事件退回到底下的父控件，继续往系统默认方向传递；如图8所示，MyTextView的dispatchTouchEvent返回false，事件退回到MyLinearLayout的onInterceptTouchEvent，继续往MyLinearLayout的onTouchEvent传递，即相当于以MyLinearLayout为最顶层控件；"></a>（3）若返回false，事件传递到该方法后，事件退回到底下的父控件，继续往系统默认方向传递；如图8所示，MyTextView的dispatchTouchEvent返回false，事件退回到MyLinearLayout的onInterceptTouchEvent，继续往MyLinearLayout的onTouchEvent传递，即相当于以MyLinearLayout为最顶层控件；</h6><h3 id="三、关于onInterceptTouchEvent"><a href="#三、关于onInterceptTouchEvent" class="headerlink" title="三、关于onInterceptTouchEvent"></a>三、关于onInterceptTouchEvent</h3><p>#####1. MyLinearLayout的onInterceptTouchEvent返回true</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/3334280-a5d16a12f4083db4?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<blockquote>
+<p>总结：该方法只有ViewGroup的控件才会有，其父类的方法直接返回false，所以返回false就为图1中按默认方向传递了；该方法的作用就是拦截触摸事件，如果返回true，就是在当前控件拦截住触摸事件，传递给自己的onTouchEvent方法，再继续往底下控件传递给onTouchEvent，如果返回false或父类方法，就传递给它上面控件的dispatchTouchEvent；</p>
+</blockquote>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2015/01/19/2015-1-19-source/" data-id="cjs01i069000fbno9upodf61w" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2017/02/26/2017-2-26-source/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Android视图创建原理
+        
+      </div>
+    </a>
+  
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/android/">android</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">March 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">February 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01/">January 2015</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2017/07/15/2017-7-15-source/">从一碗面想到的装饰模式</a>
+          </li>
+        
+          <li>
+            <a href="/2017/07/08/2017-7-8-source/">用王者荣耀分析策略模式</a>
+          </li>
+        
+          <li>
+            <a href="/2017/06/30/2017-6-30-source/">设计模式之工厂模式</a>
+          </li>
+        
+          <li>
+            <a href="/2017/03/14/2017-4-13-source/">Java中volatile的作用</a>
+          </li>
+        
+          <li>
+            <a href="/2017/02/26/2017-2-26-source/">Android视图创建原理</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2019 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>

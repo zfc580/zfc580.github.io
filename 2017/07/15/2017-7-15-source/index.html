@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+
+  
+  <title>从一碗面想到的装饰模式 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="装饰器模式（Decorator Pattern）允许向一个现有的对象添加新的功能，同时又不改变其结构。这种类型的设计模式属于结构型模式，它是作为现有的类的一个包装。  情景在厦门的小伙伴们一定对沙茶面很熟悉，作为厦门的一个特色小吃，大街小巷到处能看到挂有“沙茶面”招牌的面馆，味道鲜美，可以加各种配料，是外地游客必吃的一种小吃。 假设面馆现在要做一个沙茶面订单系统，能计算出每一碗面的价格。而面馆有">
+<meta property="og:type" content="article">
+<meta property="og:title" content="从一碗面想到的装饰模式">
+<meta property="og:url" content="http://yoursite.com/2017/07/15/2017-7-15-source/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="装饰器模式（Decorator Pattern）允许向一个现有的对象添加新的功能，同时又不改变其结构。这种类型的设计模式属于结构型模式，它是作为现有的类的一个包装。  情景在厦门的小伙伴们一定对沙茶面很熟悉，作为厦门的一个特色小吃，大街小巷到处能看到挂有“沙茶面”招牌的面馆，味道鲜美，可以加各种配料，是外地游客必吃的一种小吃。 假设面馆现在要做一个沙茶面订单系统，能计算出每一碗面的价格。而面馆有">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3334280-f7ff3f888aaf0345.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3334280-9dc845d5f4d9437d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3334280-1d639aee7b699e07.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2019-01-25T12:59:39.916Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="从一碗面想到的装饰模式">
+<meta name="twitter:description" content="装饰器模式（Decorator Pattern）允许向一个现有的对象添加新的功能，同时又不改变其结构。这种类型的设计模式属于结构型模式，它是作为现有的类的一个包装。  情景在厦门的小伙伴们一定对沙茶面很熟悉，作为厦门的一个特色小吃，大街小巷到处能看到挂有“沙茶面”招牌的面馆，味道鲜美，可以加各种配料，是外地游客必吃的一种小吃。 假设面馆现在要做一个沙茶面订单系统，能计算出每一碗面的价格。而面馆有">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/3334280-f7ff3f888aaf0345.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-2017-7-15-source" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/07/15/2017-7-15-source/" class="article-date">
+  <time datetime="2017-07-15T07:36:00.000Z" itemprop="datePublished">2017-07-15</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/java/">java</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      从一碗面想到的装饰模式
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <blockquote>
+<p><strong>装饰器模式（Decorator Pattern）</strong>允许向一个现有的对象添加新的功能，同时又不改变其结构。这种类型的设计模式属于结构型模式，它是作为现有的类的一个包装。</p>
+</blockquote>
+<h3 id="情景"><a href="#情景" class="headerlink" title="情景"></a>情景</h3><p><em>在厦门的小伙伴们一定对沙茶面很熟悉，作为厦门的一个特色小吃，大街小巷到处能看到挂有“沙茶面”招牌的面馆，味道鲜美，可以加各种配料，是外地游客必吃的一种小吃。</em></p>
+<p>假设面馆现在要做一个沙茶面订单系统，能计算出每一碗面的价格。而面馆有两种面，一种沙茶面，一种清汤面，两种面有不同的定价，一开始我们可能会这样设计的，定义两种面：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/3334280-f7ff3f888aaf0345.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<p>每一碗面顾客可以加配料，有瘦肉、猪肝、鱿鱼等，每一种配料都有不同的价格，清汤面和沙茶面加了不同的料更是有多种价格，接下去怎么处理呢？可能你会想到用成员变量加继承方式，如下：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/3334280-9dc845d5f4d9437d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<p>这样每一碗面都可以设置自己的配料，在计算价格调用cost()时就可以根据Noddle对象是否含有对应的配料，有的话再加上配料的价钱就能计算出这碗面的价格；</p>
+<h3 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h3><p>这样处理有点问题，假如现在面馆又增加了一种配料，比如老板今天新进了花蛤、肉丸，这时候Noddle基类还得加上这两种配料的成员，每加一种配料，基类就要改动一次，这样明显违背了设计模式：<strong>对扩展开发，对修改关闭</strong>的重要原则。</p>
+<h3 id="方案"><a href="#方案" class="headerlink" title="方案"></a>方案</h3><p>这时候我们就可以使用装饰器模式了，它能使我们加每一种调料时可以不改变原有的面的属性，极大地提高了灵活性和可扩展性，下面介绍一下通过装饰模式处理的步骤：</p>
+<h5 id="1-创建Noddle基类"><a href="#1-创建Noddle基类" class="headerlink" title="1. 创建Noddle基类"></a>1. 创建Noddle基类</h5><p>抽象面条类有mDescription标注是哪一种面条，mPrice为定价，每一种面的价格和名称都在子类重写</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">public abstract class Noddle &#123;</span><br><span class="line"></span><br><span class="line">    public String mDescription = &quot;Unknow Noddle&quot;;</span><br><span class="line"></span><br><span class="line">    public float mPrice = 0.0f;</span><br><span class="line"></span><br><span class="line">    public String getDescription()&#123;</span><br><span class="line">        return mDescription;</span><br><span class="line">    &#125;</span><br><span class="line">    public float cost()&#123;</span><br><span class="line">        return mPrice;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="2-实现两种面：沙茶面和清汤面"><a href="#2-实现两种面：沙茶面和清汤面" class="headerlink" title="2. 实现两种面：沙茶面和清汤面"></a>2. 实现两种面：沙茶面和清汤面</h5><p>假设沙茶面每碗不含任何配料定价15块，清汤面每碗不含任何配料定价10块</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">public class SatayNoddle extends Noddle &#123;</span><br><span class="line">    @Override</span><br><span class="line">    public String getDescription() &#123;</span><br><span class="line">        return &quot;SatayNoddle&quot;;</span><br><span class="line">    &#125;</span><br><span class="line">    @Override</span><br><span class="line">    public float cost() &#123;</span><br><span class="line">        return 15.0f;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">public class LightSoupNoddle extends Noddle &#123;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public String getDescription() &#123;</span><br><span class="line">        return &quot;LightSoupNoddle&quot;;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public float cost() &#123;</span><br><span class="line">        return 10.0f;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="3-创建抽象装饰类"><a href="#3-创建抽象装饰类" class="headerlink" title="3. 创建抽象装饰类"></a>3. 创建抽象装饰类</h5><p>这个类持有一个Noddle对象，而自己本身也是Noddle类型，这样能保持动作一致性，都有cost()方法，而且cost可以在调用成员变量的cost()方法基础上再加上自己额外的处理，即能计算被装饰者的价格外还能加上自己的价格</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">abstract class DecorateNoddle extends Noddle &#123;</span><br><span class="line"></span><br><span class="line">    public Noddle mNoddle;</span><br><span class="line"></span><br><span class="line">    public DecorateNoddle(Noddle noddle)&#123;</span><br><span class="line">        mNoddle = noddle;</span><br><span class="line">    &#125;</span><br><span class="line">    @Override</span><br><span class="line">    public String getDescription() &#123;</span><br><span class="line">        return mNoddle.getDescription() + mDescription;</span><br><span class="line">    &#125;</span><br><span class="line">    @Override</span><br><span class="line">    public float cost() &#123;</span><br><span class="line">        return mNoddle.cost() + mPrice;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="4-实现两种配料：瘦肉和猪肝，它们属于装饰者"><a href="#4-实现两种配料：瘦肉和猪肝，它们属于装饰者" class="headerlink" title="4. 实现两种配料：瘦肉和猪肝，它们属于装饰者"></a>4. 实现两种配料：瘦肉和猪肝，它们属于装饰者</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">public class LeanBurdening extends DecorateNoddle &#123;</span><br><span class="line"></span><br><span class="line">    public LeanBurdening(Noddle noddle) &#123;</span><br><span class="line">        super(noddle);</span><br><span class="line">    &#125;</span><br><span class="line">    @Override</span><br><span class="line">    public String getDescription() &#123;</span><br><span class="line">        mDescription = &quot; + Lean&quot;;</span><br><span class="line">        return super.getDescription();</span><br><span class="line">    &#125;</span><br><span class="line">    @Override</span><br><span class="line">    public float cost() &#123;</span><br><span class="line">        mPrice = 1.5f;</span><br><span class="line">        return super.cost();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">public class LiverBurdening extends DecorateNoddle &#123;</span><br><span class="line"></span><br><span class="line">    public LiverBurdening(Noddle noddle) &#123;</span><br><span class="line">        super(noddle);</span><br><span class="line">    &#125;</span><br><span class="line">    @Override</span><br><span class="line">    public String getDescription() &#123;</span><br><span class="line">        mDescription = &quot; + Liver&quot;;</span><br><span class="line">        return super.getDescription();</span><br><span class="line">    &#125;</span><br><span class="line">    @Override</span><br><span class="line">    public float cost() &#123;</span><br><span class="line">        mPrice = 2.0f;</span><br><span class="line">        return super.cost();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这样准备工作就做好了，这里总结一下装饰模式的工作流程，假设一个顾客点了一碗沙茶面，加了瘦肉和猪肝配料，这是就有如下处理：</p>
+<p><strong>1. 创建一个沙茶面对象；</strong></p>
+<p><strong>2. 创建一个瘦肉配料对象，这个配料装饰了沙茶面，即沙茶面对象是自己的成员变量，要计算价格时就可以把自己的价格机上沙茶面的价格；</strong></p>
+<p><strong>3. 创建一个猪肝对象，同第2点；</strong></p>
+<p><strong>4. 由于装饰对象两种配料和被装饰对象沙茶面都是Noddle类型，所以计算价格时只需要计算最外围的装饰对象的价格就能得出这碗面的总价格了。</strong></p>
+<p>用如下代码处理：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">public class NoddleStoreDemo &#123;</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args)&#123;</span><br><span class="line"></span><br><span class="line">        Noddle satayNoddle = new SatayNoddle();</span><br><span class="line">        satayNoddle = new LiverBurdening(satayNoddle);</span><br><span class="line">        satayNoddle = new LeanBurdening(satayNoddle);</span><br><span class="line">        System.out.println(satayNoddle.getDescription() + &quot;, price: &quot; + satayNoddle.cost());</span><br><span class="line"></span><br><span class="line">        Noddle lightSoupNoddle = new LightSoupNoddle();</span><br><span class="line">        lightSoupNoddle = new LiverBurdening(lightSoupNoddle);</span><br><span class="line">        lightSoupNoddle = new LeanBurdening(lightSoupNoddle);</span><br><span class="line">        System.out.println(lightSoupNoddle.getDescription() + &quot;, price: &quot; + lightSoupNoddle.cost());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>看下输出的结果：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">SatayNoddle + Liver + Lean, price: 18.5</span><br><span class="line">LightSoupNoddle + Liver + Lean, price: 13.5</span><br></pre></td></tr></table></figure>
+<p><img src="http://upload-images.jianshu.io/upload_images/3334280-1d639aee7b699e07.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><p>一般的，我们为了扩展一个类经常使用继承方式实现，由于继承为类引入静态特征，并且随着扩展功能的增多，子类会很膨胀。这时就可以动态地给一个对象添加一些额外的职责，这样装饰类和被装饰类能独立发展，不相互耦合，装饰模式是继承的一个替代模式，装饰模式可以动态扩展一个实现类的功能。</p>
+<p>示例代码<a href="https://github.com/zfc580/DesignPatternDemo" target="_blank" rel="noopener">戳这里</a>。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/07/15/2017-7-15-source/" data-id="cjs01i05w0004bno9ql7p8rai" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2017/07/08/2017-7-8-source/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">用王者荣耀分析策略模式</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/android/">android</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">March 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">February 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01/">January 2015</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2017/07/15/2017-7-15-source/">从一碗面想到的装饰模式</a>
+          </li>
+        
+          <li>
+            <a href="/2017/07/08/2017-7-8-source/">用王者荣耀分析策略模式</a>
+          </li>
+        
+          <li>
+            <a href="/2017/06/30/2017-6-30-source/">设计模式之工厂模式</a>
+          </li>
+        
+          <li>
+            <a href="/2017/03/14/2017-4-13-source/">Java中volatile的作用</a>
+          </li>
+        
+          <li>
+            <a href="/2017/02/26/2017-2-26-source/">Android视图创建原理</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2019 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>

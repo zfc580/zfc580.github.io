@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+
+  
+  <title>设计模式之工厂模式 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="工厂模式是最常用的设计模式之一，这种类型的设计模式属于创建型模式，它提供了一种创建对象的最佳方式。在工厂模式中，我们在创建对象时不会对客户端暴露创建逻辑，并且是通过使用一个共同的接口来指向新创建的对象。  工厂模式分为简单工厂模式和工厂方法模式两种。 简单工厂模式简单工厂模式主要有四种角色：  抽象产品角色：接口或抽象类，定义一个产品的共有属性； 具体产品角色：对抽象产品的具体实现，由工厂类创建">
+<meta property="og:type" content="article">
+<meta property="og:title" content="设计模式之工厂模式">
+<meta property="og:url" content="http://yoursite.com/2017/06/30/2017-6-30-source/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="工厂模式是最常用的设计模式之一，这种类型的设计模式属于创建型模式，它提供了一种创建对象的最佳方式。在工厂模式中，我们在创建对象时不会对客户端暴露创建逻辑，并且是通过使用一个共同的接口来指向新创建的对象。  工厂模式分为简单工厂模式和工厂方法模式两种。 简单工厂模式简单工厂模式主要有四种角色：  抽象产品角色：接口或抽象类，定义一个产品的共有属性； 具体产品角色：对抽象产品的具体实现，由工厂类创建">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3334280-36029597728dd38d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3334280-e89d358b52773c3d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2019-01-25T12:59:39.916Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="设计模式之工厂模式">
+<meta name="twitter:description" content="工厂模式是最常用的设计模式之一，这种类型的设计模式属于创建型模式，它提供了一种创建对象的最佳方式。在工厂模式中，我们在创建对象时不会对客户端暴露创建逻辑，并且是通过使用一个共同的接口来指向新创建的对象。  工厂模式分为简单工厂模式和工厂方法模式两种。 简单工厂模式简单工厂模式主要有四种角色：  抽象产品角色：接口或抽象类，定义一个产品的共有属性； 具体产品角色：对抽象产品的具体实现，由工厂类创建">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/3334280-36029597728dd38d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-2017-6-30-source" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/06/30/2017-6-30-source/" class="article-date">
+  <time datetime="2017-06-30T07:56:00.000Z" itemprop="datePublished">2017-06-30</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/java/">java</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      设计模式之工厂模式
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <blockquote>
+<p>工厂模式是最常用的设计模式之一，这种类型的设计模式属于创建型模式，它提供了一种创建对象的最佳方式。在工厂模式中，我们在创建对象时不会对客户端暴露创建逻辑，并且是通过使用一个共同的接口来指向新创建的对象。</p>
+</blockquote>
+<p>工厂模式分为<strong>简单工厂模式</strong>和<strong>工厂方法模式</strong>两种。</p>
+<h3 id="简单工厂模式"><a href="#简单工厂模式" class="headerlink" title="简单工厂模式"></a>简单工厂模式</h3><p>简单工厂模式主要有四种角色：</p>
+<ul>
+<li>抽象产品角色：接口或抽象类，定义一个产品的共有属性；</li>
+<li>具体产品角色：对抽象产品的具体实现，由工厂类创建；</li>
+<li>工厂类角色：创建具体产品类，产品都必须由该类实例化；</li>
+<li>客户端：创建工厂类实例，通过工厂类简介创建产品类；</li>
+</ul>
+<p>结构图如下：<br><img src="http://upload-images.jianshu.io/upload_images/3334280-36029597728dd38d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<p>创建抽象产品角色：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public interface Shape &#123;</span><br><span class="line">    void draw();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>创建三个具体产品对象：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">public class Rectangle implements Shape&#123;</span><br><span class="line">    @Override</span><br><span class="line">    public void draw() &#123;</span><br><span class="line">        System.out.println(&quot;draw the Rectangle.&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">public class Square implements Shape &#123;</span><br><span class="line">    @Override</span><br><span class="line">    public void draw() &#123;</span><br><span class="line">        System.out.println(&quot;draw the Square.&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">public class Circle implements Shape &#123;</span><br><span class="line">    @Override</span><br><span class="line">    public void draw() &#123;</span><br><span class="line">        System.out.println(&quot;draw the Circle.&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>常见工厂类角色：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">public class ShapeFactory &#123;</span><br><span class="line"></span><br><span class="line">    public final static int TYPE_RECTANGLE = 0;</span><br><span class="line">    public final static int TYPE_SQUARE = 1;</span><br><span class="line">    public final static int TYPE_CIRLE = 2;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    Shape createShape(int type) &#123;</span><br><span class="line"></span><br><span class="line">        Shape mShape = null;</span><br><span class="line"></span><br><span class="line">        switch (type)&#123;</span><br><span class="line"></span><br><span class="line">            case TYPE_RECTANGLE:</span><br><span class="line">                mShape = new Rectangle();</span><br><span class="line">                break;</span><br><span class="line"></span><br><span class="line">            case TYPE_SQUARE:</span><br><span class="line">                mShape = new Square();</span><br><span class="line">                break;</span><br><span class="line"></span><br><span class="line">            case TYPE_CIRLE:</span><br><span class="line">                mShape = new Circle();</span><br><span class="line">                break;</span><br><span class="line">        &#125;</span><br><span class="line">        return mShape;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>客户端代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">public class FactoryPartternDemo &#123;</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args)&#123;</span><br><span class="line"></span><br><span class="line">        ShapeFactory mShapeFactory = new ShapeFactory();</span><br><span class="line">        Shape mRectangle = mShapeFactory.createShape(ShapeFactory.TYPE_RECTANGLE);</span><br><span class="line">        mRectangle.draw();</span><br><span class="line">        Shape mSquare = mShapeFactory.createShape(ShapeFactory.TYPE_SQUARE);</span><br><span class="line">        mSquare.draw();</span><br><span class="line">        Shape mCircle = mShapeFactory.createShape(ShapeFactory.TYPE_CIRLE);</span><br><span class="line">        mCircle.draw();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>运行后输出</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">draw the Rectangle.</span><br><span class="line">draw the Square.</span><br><span class="line">draw the Circle.</span><br></pre></td></tr></table></figure>
+<h3 id="工厂模式的优点"><a href="#工厂模式的优点" class="headerlink" title="工厂模式的优点"></a>工厂模式的优点</h3><p>假设我们不使用工厂模式，要创建这三个具体产品类对象你可能会这样写：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">public class FactoryPartternDemo &#123;</span><br><span class="line">    public static void main(String[] args)&#123;</span><br><span class="line">        Rectangle rectangle = new Rectangle();</span><br><span class="line">        rectangle.draw();</span><br><span class="line">        Square square = new Square();</span><br><span class="line">        square.draw();</span><br><span class="line">        Circle circle = new Circle();</span><br><span class="line">        circle.draw();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这样同样是输出了和上面一样的输出结果，而且代码量减少了，看起来好像这种方式会更好是不是。如果这样想的话你就too young too simple了。</p>
+<p>根据<strong>依赖倒置</strong>原则：<strong>要依赖抽象，不依赖具体类。</strong></p>
+<p>第二种写法客户端FactoryPartternDemo依赖了三个具体类，如下图：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/3334280-e89d358b52773c3d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<p>而第一种写法FactoryPartternDemo只依赖了抽象类Shape，它需要什么类型的对象，只需要向ShapeFactory传入一个类型值，就能获取到需要的对象，而不需要关心具体是什么类。</p>
+<p>假设后面由于业务扩展，需要增加类似Oval, Rhombus等多个具体产品时，第二种写法会随着业务产品的增加，依赖的类也随着增加，而第一种写法不管增加多少业务类，它还是只依赖Shape抽象类。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/06/30/2017-6-30-source/" data-id="cjs01i05v0003bno9u1tx3682" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2017/07/08/2017-7-8-source/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          用王者荣耀分析策略模式
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2017/03/14/2017-4-13-source/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Java中volatile的作用</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/android/">android</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">March 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">February 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01/">January 2015</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2017/07/15/2017-7-15-source/">从一碗面想到的装饰模式</a>
+          </li>
+        
+          <li>
+            <a href="/2017/07/08/2017-7-8-source/">用王者荣耀分析策略模式</a>
+          </li>
+        
+          <li>
+            <a href="/2017/06/30/2017-6-30-source/">设计模式之工厂模式</a>
+          </li>
+        
+          <li>
+            <a href="/2017/03/14/2017-4-13-source/">Java中volatile的作用</a>
+          </li>
+        
+          <li>
+            <a href="/2017/02/26/2017-2-26-source/">Android视图创建原理</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2019 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>

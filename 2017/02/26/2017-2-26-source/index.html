@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+
+  
+  <title>Android视图创建原理 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="我们在开发android程序，如果要写一个界面，很自然就想到几个步骤：创建一个Activity类，写一个xml布局，在回调函数onCreate()通过setContentView()把xml布局文件设置进Activity，然后一个简单的界面就出来了，相当简单！可是，在这个过程中android系统到底经历了什么呢，作为一名应用开发工程师，我们大部分只关心上层的实现，并不清楚android系统层面的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android视图创建原理">
+<meta property="og:url" content="http://yoursite.com/2017/02/26/2017-2-26-source/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="我们在开发android程序，如果要写一个界面，很自然就想到几个步骤：创建一个Activity类，写一个xml布局，在回调函数onCreate()通过setContentView()把xml布局文件设置进Activity，然后一个简单的界面就出来了，相当简单！可是，在这个过程中android系统到底经历了什么呢，作为一名应用开发工程师，我们大部分只关心上层的实现，并不清楚android系统层面的">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3334280-02bc5b43624b851b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3334280-e6dec4e61ab1271b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3334280-3384b473cf74ac90.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3334280-d6896fdf0a5272b9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2019-01-25T12:59:39.916Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android视图创建原理">
+<meta name="twitter:description" content="我们在开发android程序，如果要写一个界面，很自然就想到几个步骤：创建一个Activity类，写一个xml布局，在回调函数onCreate()通过setContentView()把xml布局文件设置进Activity，然后一个简单的界面就出来了，相当简单！可是，在这个过程中android系统到底经历了什么呢，作为一名应用开发工程师，我们大部分只关心上层的实现，并不清楚android系统层面的">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/3334280-02bc5b43624b851b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-2017-2-26-source" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/02/26/2017-2-26-source/" class="article-date">
+  <time datetime="2017-02-26T06:00:00.000Z" itemprop="datePublished">2017-02-26</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/android/">android</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Android视图创建原理
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <blockquote>
+<p>我们在开发android程序，如果要写一个界面，很自然就想到几个步骤：创建一个Activity类，写一个xml布局，在回调函数onCreate()通过setContentView()把xml布局文件设置进Activity，然后一个简单的界面就出来了，相当简单！可是，在这个过程中android系统到底经历了什么呢，作为一名应用开发工程师，我们大部分只关心上层的实现，并不清楚android系统层面的实现原理，这篇文章我将分析与Activity视图相关的对象Window、WindowManager和View的之间关系和它们创建过程。</p>
+</blockquote>
+<h2 id="Window的初始化过程"><a href="#Window的初始化过程" class="headerlink" title="Window的初始化过程"></a>Window的初始化过程</h2><hr>
+<p>Activity有一个类型为Window的成员变量，它在Activity成员函数attach()被初始化，附上源码:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">public class Activity extends ContextThemeWrapper</span><br><span class="line">        implements LayoutInflater.Factory2,</span><br><span class="line">        Window.Callback, KeyEvent.Callback,</span><br><span class="line">        OnCreateContextMenuListener, ComponentCallbacks2,</span><br><span class="line">        Window.OnWindowDismissedCallback &#123;</span><br><span class="line">  ......</span><br><span class="line">  private Window mWindow;</span><br><span class="line">  ......</span><br><span class="line"></span><br><span class="line">  final void attach(Context context, ActivityThread aThread,</span><br><span class="line">            Instrumentation instr, IBinder token, int ident,</span><br><span class="line">            Application application, Intent intent, ActivityInfo info,</span><br><span class="line">            CharSequence title, Activity parent, String id,</span><br><span class="line">            NonConfigurationInstances lastNonConfigurationInstances,</span><br><span class="line">            Configuration config, String referrer, IVoiceInteractor voiceInteractor) &#123;</span><br><span class="line">        attachBaseContext(context);</span><br><span class="line">        mFragments.attachHost(null /*parent*/);</span><br><span class="line">        mWindow = new PhoneWindow(this);</span><br><span class="line">        mWindow.setCallback(this);</span><br><span class="line">        mWindow.setOnWindowDismissedCallback(this);</span><br><span class="line">        mWindow.getLayoutInflater().setPrivateFactory(this);</span><br><span class="line">        if (info.softInputMode != WindowManager.LayoutParams.SOFT_INPUT_STATE_UNSPECIFIED) &#123;</span><br><span class="line">            mWindow.setSoftInputMode(info.softInputMode);</span><br><span class="line">        &#125;</span><br><span class="line">        if (info.uiOptions != 0) &#123;</span><br><span class="line">            mWindow.setUiOptions(info.uiOptions);</span><br><span class="line">        &#125;</span><br><span class="line">        ......    </span><br><span class="line">        mWindow.setWindowManager(null, mToken, mComponent.flattenToString());    </span><br><span class="line">        ......    </span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>整个代码的调用流程可以用下面的时序图来概括：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/3334280-02bc5b43624b851b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="图1"></p>
+<h3 id="attach-函数主要做了以下几件事情："><a href="#attach-函数主要做了以下几件事情：" class="headerlink" title="attach()函数主要做了以下几件事情："></a>attach()函数主要做了以下几件事情：</h3><ul>
+<li>初始化一个PhoneWindow对象并赋给mWindow，由此可知PhoneWindow是Window的子类，两者的关系可以参考下面的图2;</li>
+<li>调用PhoneWindow的成员函数setCallback()设置Activity的回调，该回调用来通知键盘和触摸回调；</li>
+<li>调用setSoftInputMode()设置描述窗口的软键盘输入区域的显示模式；</li>
+<li>为PhoneWindow创建一个WindowManagerImpl对象并保存在成员变量mWindowManager中，WindowManagerImpl用来处理后面会讲到的View对象；</li>
+</ul>
+<p>Activity的所有视图相关的属性和布局对象都是通过PhoneWindow来维护的，我通过一个类图来体现Window和PhoneWindow的关系：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/3334280-e6dec4e61ab1271b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="图2"></p>
+<h2 id="View的创建过程"><a href="#View的创建过程" class="headerlink" title="View的创建过程"></a>View的创建过程</h2><p>通过下面的时序图我们可以知道整View的创建过程<br><img src="http://upload-images.jianshu.io/upload_images/3334280-3384b473cf74ac90.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="图3"></p>
+<p>其中ActivityThread是创建Activity的一个处理类，通过这个类来处理Activity的生命周期，这个流程不是这篇文章讨论的范畴，我们只要知道系统经过一系列复杂的过程最终通过performLaunchActivity调用了Activity的onCreate函数，而我们要开发应用程序一般都会在onCreate函数调用setContentView来设置布局，最终调用了PhoneWindow的setContentView()，我们来看源码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line">public class PhoneWindow extends Window implements MenuBuilder.Callback &#123;</span><br><span class="line">    // This is the top-level view of the window, containing the window decor.</span><br><span class="line">    private DecorView mDecor;</span><br><span class="line"></span><br><span class="line">    // This is the view in which the window contents are placed. It is either</span><br><span class="line">    // mDecor itself, or a child of mDecor where the contents go.</span><br><span class="line">    private ViewGroup mContentParent;</span><br><span class="line"></span><br><span class="line">    private ViewGroup mContentRoot;</span><br><span class="line">    ......</span><br><span class="line">    @Override</span><br><span class="line">    public void setContentView(int layoutResID) &#123;</span><br><span class="line">        // Note: FEATURE_CONTENT_TRANSITIONS may be set in the process of installing the window</span><br><span class="line">        // decor, when theme attributes and the like are crystalized. Do not check the feature</span><br><span class="line">        // before this happens.</span><br><span class="line">        if (mContentParent == null) &#123;</span><br><span class="line">            installDecor();</span><br><span class="line">        &#125; else if (!hasFeature(FEATURE_CONTENT_TRANSITIONS)) &#123;</span><br><span class="line">            mContentParent.removeAllViews();</span><br><span class="line">        &#125;</span><br><span class="line">        if (hasFeature(FEATURE_CONTENT_TRANSITIONS)) &#123;</span><br><span class="line">            final Scene newScene = Scene.getSceneForLayout(mContentParent, layoutResID,</span><br><span class="line">                    getContext());</span><br><span class="line">            transitionTo(newScene);</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            mLayoutInflater.inflate(layoutResID, mContentParent);</span><br><span class="line">        &#125;</span><br><span class="line">        mContentParent.requestApplyInsets();</span><br><span class="line">        final Callback cb = getCallback();</span><br><span class="line">        if (cb != null &amp;&amp; !isDestroyed()) &#123;</span><br><span class="line">            cb.onContentChanged();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    .......</span><br><span class="line">    private void installDecor() &#123;  </span><br><span class="line">        if (mDecor == null) &#123;  </span><br><span class="line">            mDecor = generateDecor();  </span><br><span class="line">            ......  </span><br><span class="line">        &#125;  </span><br><span class="line">        if (mContentParent == null) &#123;  </span><br><span class="line">            mContentParent = generateLayout(mDecor);  </span><br><span class="line">  </span><br><span class="line">            mTitleView = (TextView)findViewById(com.android.internal.R.id.title);  </span><br><span class="line">            if (mTitleView != null) &#123;  </span><br><span class="line">                if ((getLocalFeatures() &amp; (1 &lt;&lt; FEATURE_NO_TITLE)) != 0) &#123;  </span><br><span class="line">                    View titleContainer = findViewById(com.android.internal.R.id.title_container);  </span><br><span class="line">                    if (titleContainer != null) &#123;  </span><br><span class="line">                        titleContainer.setVisibility(View.GONE);  </span><br><span class="line">                    &#125; else &#123;  </span><br><span class="line">                        mTitleView.setVisibility(View.GONE);  </span><br><span class="line">                    &#125;  </span><br><span class="line">                    if (mContentParent instanceof FrameLayout) &#123;  </span><br><span class="line">                        ((FrameLayout)mContentParent).setForeground(null);  </span><br><span class="line">                    &#125;  </span><br><span class="line">                &#125; else &#123;  </span><br><span class="line">                    mTitleView.setText(mTitle);  </span><br><span class="line">                &#125;  </span><br><span class="line">            &#125;  </span><br><span class="line">        &#125;  </span><br><span class="line">    &#125;  </span><br><span class="line">    ......</span><br></pre></td></tr></table></figure>
+<p>通过代码分析，PhoneWindow通过以下几个步骤来创建View：</p>
+<ul>
+<li>创建一个DecorView对象mDecor，通过以上的图2我们知道DecorView继承自FrameLayout，它是Activity的顶级视图，Activity显示的所有界面内容都放在里面；</li>
+<li>根据Activity的Feature加载不同的布局文件，这些布局文件放在frameworks/base/core/res/res/layout目录下，它们必须包含有一个id值为“content”的布局控件，加载完后解析成一个布局对象mContentRoot，接着把mContentRoot当作子布局添加到mDecor中；</li>
+<li>从mContentRoot获取到id为“content”的子布局mContentParent，将我们自定义的整个布局添加到mContentParent中；</li>
+</ul>
+<p>最终可以通过下面的图表示activity的view布局结构：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/3334280-d6896fdf0a5272b9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="图4"></p>
+<p>这样我们就知道和Activity相关的Window和View的创建过程了，接下来，如图3的时序图，ActivityThread会将创建好的视图对象Window和布局对象通过addView()方法最终传递到WindowManagerGlobal，后者就会将每个Activity对应的Window和View关联起来，最终传递到WindowManagerService，后者会统一协调整个系统的Activity视图布局，根据需要将需要渲染的activity布局内容交给另一个叫SurfaceFlinger的服务去渲染出来，这个时候我们就能在屏幕上看到具体的布局图形了。关于WindowManagerService和SurfaceFlinger涉及了另外两块更加复杂的内容，此篇文章不作详细分析。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/02/26/2017-2-26-source/" data-id="cjs01i05m0000bno959o0yu3u" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2017/03/14/2017-4-13-source/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Java中volatile的作用
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2015/01/19/2015-1-19-source/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Android触摸事件传递</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/android/">android</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">March 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">February 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01/">January 2015</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2017/07/15/2017-7-15-source/">从一碗面想到的装饰模式</a>
+          </li>
+        
+          <li>
+            <a href="/2017/07/08/2017-7-8-source/">用王者荣耀分析策略模式</a>
+          </li>
+        
+          <li>
+            <a href="/2017/06/30/2017-6-30-source/">设计模式之工厂模式</a>
+          </li>
+        
+          <li>
+            <a href="/2017/03/14/2017-4-13-source/">Java中volatile的作用</a>
+          </li>
+        
+          <li>
+            <a href="/2017/02/26/2017-2-26-source/">Android视图创建原理</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2019 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>

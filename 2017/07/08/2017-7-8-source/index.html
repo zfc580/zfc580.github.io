@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+
+  
+  <title>用王者荣耀分析策略模式 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="策略模式（Strategy Pattern）使用了算法族，分别封装起来，让它们可以互相替换，此模式让算法的变化独立于使用算法的客户。这种类型的设计模式属于行为型模式。  从上面的概念我们可以看得出来，策略模式主要有两个角色：算法族和使用算法的客户。算法族表示一系列的动作和操作，而使用算法的客户就是执行这些操作的主体。 最近王者荣耀大火，争议不断，突然想到用王者荣耀的例子解析一下正在学习的设计模式">
+<meta property="og:type" content="article">
+<meta property="og:title" content="用王者荣耀分析策略模式">
+<meta property="og:url" content="http://yoursite.com/2017/07/08/2017-7-8-source/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="策略模式（Strategy Pattern）使用了算法族，分别封装起来，让它们可以互相替换，此模式让算法的变化独立于使用算法的客户。这种类型的设计模式属于行为型模式。  从上面的概念我们可以看得出来，策略模式主要有两个角色：算法族和使用算法的客户。算法族表示一系列的动作和操作，而使用算法的客户就是执行这些操作的主体。 最近王者荣耀大火，争议不断，突然想到用王者荣耀的例子解析一下正在学习的设计模式">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3334280-dc91acc2a931b52e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2019-01-25T12:59:39.916Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="用王者荣耀分析策略模式">
+<meta name="twitter:description" content="策略模式（Strategy Pattern）使用了算法族，分别封装起来，让它们可以互相替换，此模式让算法的变化独立于使用算法的客户。这种类型的设计模式属于行为型模式。  从上面的概念我们可以看得出来，策略模式主要有两个角色：算法族和使用算法的客户。算法族表示一系列的动作和操作，而使用算法的客户就是执行这些操作的主体。 最近王者荣耀大火，争议不断，突然想到用王者荣耀的例子解析一下正在学习的设计模式">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/3334280-dc91acc2a931b52e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-2017-7-8-source" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/07/08/2017-7-8-source/" class="article-date">
+  <time datetime="2017-07-08T08:34:00.000Z" itemprop="datePublished">2017-07-08</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/java/">java</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      用王者荣耀分析策略模式
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <blockquote>
+<p>策略模式（Strategy Pattern）<strong>使用了算法族，分别封装起来，让它们可以互相替换，此模式让算法的变化独立于使用算法的客户</strong>。这种类型的设计模式属于行为型模式。</p>
+</blockquote>
+<p>从上面的概念我们可以看得出来，策略模式主要有两个角色：<strong>算法族</strong>和<strong>使用算法的客户</strong>。算法族表示一系列的动作和操作，而使用算法的客户就是执行这些操作的主体。</p>
+<p>最近王者荣耀大火，争议不断，突然想到用王者荣耀的例子解析一下正在学习的设计模式，学习和玩乐结合是最好的搭配，现在我就以王者荣耀为情景解释分析策略模式的操作。</p>
+<p>#####1. 创建算法族：英雄技能</p>
+<p>王者荣耀中每个英雄都有一套技能，每个英雄所拥有的技能都不一样，比如狄仁杰可以施放令牌技能，项羽有霸王斩技能，鲁班七号有无敌沙嘴炮技能，按照Java的封装、抽象特性，我们可以把技能抽象为一个接口，每一种技能实体都可以调用useSkill()执行技能；</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public interface SkillBehavior &#123;</span><br><span class="line">    void useSkill(); //释放技能</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>英雄的技能多种多样，我们把每一种技能都封装为一个技能类，实现统一的接口SkillBehavior，这里举例介绍三种技能：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">public class ArrowSkill implements SkillBehavior&#123;</span><br><span class="line">    @Override</span><br><span class="line">    public void useSkill() &#123;</span><br><span class="line">        System.out.println(&quot;释放暗箭技能&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">public class KnifeSkill implements SkillBehavior &#123;</span><br><span class="line">    @Override</span><br><span class="line">    public void useSkill() &#123;</span><br><span class="line">        System.out.println(&quot;释放长刀技能&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">public class GunSkill implements SkillBehavior &#123;</span><br><span class="line">    @Override</span><br><span class="line">    public void useSkill() &#123;</span><br><span class="line">        System.out.println(&quot;释放手枪技能&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>#####2. 创建使用算法族客户：英雄</p>
+<p>技能已经封装好了，还需要有使用技能的客户，那就是英雄了，每个英雄都有一个共性，那就是可以施放技能，我们就抽象封装出一个英雄类，每个英雄都持有一个技能对象，并可以调用performSkill()施放自己拥有的技能：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">public abstract class Hero &#123;</span><br><span class="line"></span><br><span class="line">    public SkillBehavior mBehavior;</span><br><span class="line"></span><br><span class="line">    public Hero()&#123;</span><br><span class="line">        System.out.print(&quot;英雄出生 &quot;);</span><br><span class="line">    &#125;</span><br><span class="line">    public void performSkill()&#123;</span><br><span class="line">        if(mBehavior != null)&#123;</span><br><span class="line">            mBehavior.useSkill();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    public void setSkillBehavior(SkillBehavior behavior)&#123;</span><br><span class="line">        mBehavior = behavior;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>英雄类封装好了，这时就需要有具体的英雄了，这里我们举例了三位英雄，也是我比较熟悉的英雄：狄仁杰、项羽、鲁班七号，每个英雄都须继承自Hero类：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">public class DiRenJie extends Hero &#123;</span><br><span class="line"></span><br><span class="line">    public DiRenJie()&#123;</span><br><span class="line">        super();</span><br><span class="line">        System.out.println(&quot;狄仁杰：代表法律制裁你...&quot;);</span><br><span class="line">        mBehavior = new ArrowSkill();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">public class XiangYu extends Hero &#123;</span><br><span class="line"></span><br><span class="line">    public XiangYu()&#123;</span><br><span class="line">        super();</span><br><span class="line">        System.out.println(&quot;项羽：我命由我... &quot;);</span><br><span class="line">        mBehavior = new KnifeSkill();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">public class LuBanQiHao extends Hero &#123;</span><br><span class="line"></span><br><span class="line">    public LuBanQiHao() &#123;</span><br><span class="line">        super();</span><br><span class="line">        System.out.println(&quot;鲁班七号：魔法大师，智障250，@￥%*&amp;￥#... &quot;);</span><br><span class="line">        mBehavior = new GunSkill();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>#####3. 算法族客户使用算法：英雄施放技能<br>技能和英雄都准备好了，这时候就要应该开始施放技能了：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">public class KingGorgeDemo &#123;</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args)&#123;</span><br><span class="line">        Hero mDi = new DiRenJie();</span><br><span class="line">        mDi.performSkill();</span><br><span class="line">        Hero mXiang = new XiangYu();</span><br><span class="line">        mXiang.performSkill();</span><br><span class="line">        Hero mLu = new LuBanQiHao();</span><br><span class="line">        mLu.performSkill();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们来看看各位英雄的输出：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">英雄出生 狄仁杰：代表法律制裁你...</span><br><span class="line">释放暗箭技能</span><br><span class="line">英雄出生 项羽：我命由我... </span><br><span class="line">释放长刀技能</span><br><span class="line">英雄出生 鲁班七号：魔法大师，智障250，@￥%*&amp;￥# </span><br><span class="line">释放手枪技能</span><br></pre></td></tr></table></figure>
+<p>#####4. 让算法族可以互相替换：英雄可以动态更换技能<br>在最开始策略模式的概念中有一句话：<strong>策略模式使用了算法族，分别封装起来，让它们可以互相替换</strong>。互相替换是什么概念呢，假设狄仁杰令牌技能使用腻了，想试一下鲁班七号的霸王枪技能，那只需要动态地给狄仁杰这个英雄设置一个GunSkill技能，后面就可以释放鲁班七号的技能了。大家可以发现在Hero里有一个方法setSkillBehavior()。操作如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">public class KingGorgeDemo &#123;</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args)&#123;</span><br><span class="line">        Hero mDi = new DiRenJie();</span><br><span class="line">        SkillBehavior gunSkill = new GunSkill();</span><br><span class="line">        mDi.setSkillBehavior(gunSkill);</span><br><span class="line">        mDi.performSkill();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这时候的输出就是：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">英雄出生 狄仁杰：代表法律制裁你...</span><br><span class="line">释放手枪技能</span><br></pre></td></tr></table></figure>
+<p>虽然这个例子有点不恰当，王者荣耀也不可能有这种操作，这只是一个简单的例子方便说明问题而已。可以举例一个实际场景：腾讯要推出狄仁杰的一项叫“神捕”的新技能，那只需要再封装一个执行SkillBehavior接口的技能类SeizeSkill，创建出SeizeSkill对象并设置给狄仁杰英雄对象，这时候释放技能时就是新的神捕技能了。</p>
+<p>#####5. 策略模式的特性<br>策略模式对于软件开发来说是一种很好的设计模式，即英雄要替换技能时不用去改变英雄的类，技能和英雄互相独立，不耦合，可以用下面的类图表示策略模式的结构：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/3334280-dc91acc2a931b52e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br><strong>优点</strong>：1、算法可以自由切换。 2、避免使用多重条件判断。 3、扩展性良好。<br><strong>适用的场景</strong>：<br>1、如果在一个系统里面有许多类，它们之间的区别仅在于它们的行为，那么使用策略模式可以动态地让一个对象在许多行为中选择一种行为。<br> 2、一个系统需要动态地在几种算法中选择一种。<br> 3、如果一个对象有很多的行为，如果不用恰当的模式，这些行为就只好使用多重的条件选择语句来实现。</p>
+<p>示例代码<a href="https://github.com/zfc580/DesignPatternDemo" target="_blank" rel="noopener">戳这里</a>。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/07/08/2017-7-8-source/" data-id="cjs01i05x0005bno9t2z92slt" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2017/07/15/2017-7-15-source/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          从一碗面想到的装饰模式
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2017/06/30/2017-6-30-source/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">设计模式之工厂模式</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/android/">android</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">March 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">February 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01/">January 2015</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2017/07/15/2017-7-15-source/">从一碗面想到的装饰模式</a>
+          </li>
+        
+          <li>
+            <a href="/2017/07/08/2017-7-8-source/">用王者荣耀分析策略模式</a>
+          </li>
+        
+          <li>
+            <a href="/2017/06/30/2017-6-30-source/">设计模式之工厂模式</a>
+          </li>
+        
+          <li>
+            <a href="/2017/03/14/2017-4-13-source/">Java中volatile的作用</a>
+          </li>
+        
+          <li>
+            <a href="/2017/02/26/2017-2-26-source/">Android视图创建原理</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2019 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>
